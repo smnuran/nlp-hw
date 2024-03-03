@@ -9,6 +9,8 @@ from math import log
 from numpy import mean
 import gzip
 import json
+import spacy
+ner = spacy.load('en_core_web_sm')
 
 class Feature:
     """
@@ -46,18 +48,94 @@ class LengthFeature(Feature):
             yield ("guess", -1)
         else:
             yield ("guess", log(1 + len(guess)))
+            yield ("guess_words", log(len(guess.split())))
 
-            
 
+class CountFeature(Feature):
 
+    #whether given string is a planidrome or not 
+    def is_palindrome(string):
+        return string == string[::-1]
+
+    def __call__(self, question, run, guess, guess_history):
+        
+        #count the num of palindromes in q and guess
+        question_split = run.split()
+        guess_split = guess.split()
+
+        pal_count_q = 0
+        for word in question_split:
+            if CountFeature.is_palindrome(word):
+                pal_count_q += 1
+        
+        pal_count_g = 0 
+        for word in guess_split:
+            if CountFeature.is_palindrome(word):
+                pal_count_g += 1 
+
+        if pal_count_q != 0:
+            yield("palindromes_question", log(pal_count_q))
+        else:
+            yield("palindromes_question", 0)
+
+        if pal_count_g != 0:
+            yield("palindromes_guess", (pal_count_g))
+        else:
+            yield("palindromes_guess", 0)
 
         
+
+
+class EntityFeature(Feature):
+
+    #try including POS info 
+
+    def __call__(self, question, run, guess, guess_history):
+        
+        process = ner(guess)
+        labels = []
+        for item in process.ents:
+            label = item.label_
+            if(label == "GPE" or label == "LOC" or label == "NORP"):
+                labels.append(label)
+
+        if(len(labels) == 0):
+            #yield("guess_entity", "NA")
+            return 
+        else: 
+            yield("guess_entity", labels[0])
+
+
+class FrequencyFeature(Feature):
+    def __init__(self, name):
+        from eval import normalize_answer
+        self.name = name 
+        self.counts = Counter()
+        self.count_cat = Counter()
+        self.normalize = normalize_answer
+
+    def add_training(self, question_source):
+        import json
+        with gzip.open(question_source) as infile:
+            questions = json.load(infile)
+            for ii in questions:
+                self.counts[self.normalize(ii["page"])] += 1
+                self.count_cat[self.normalize(ii["subcategory"])] += 1
+
+    def __call__(self, question, run, guess, guess_history):
+        yield ("guess", log(1 + self.counts[self.normalize(guess)]))
+        yield ("subcat", log(1 + self.count_cat[self.normalize(question['subcategory'])]))
+
+
+class CategoryFeature(Feature):
+    def __call__(self, question, run, guess, guess_history):
+        yield("sub", question['subcategory'])
         
 class GuessBlankFeature(Feature):
     """
     Is guess blank?
     """
-    def __call__(self, question, run, guess):
+    def __call__(self, question, run, guess, guess_history):
         yield ('true', len(guess) == 0)
 
 
@@ -65,7 +143,7 @@ class GuessCapitalsFeature(Feature):
     """
     Capital letters in guess
     """
-    def __call__(self, question, run, guess):
+    def __call__(self, question, run, guess, guess_history):
         yield ('true', log(sum(i.isupper() for i in guess) + 1))
 
 

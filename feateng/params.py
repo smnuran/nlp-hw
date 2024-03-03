@@ -31,7 +31,7 @@ def add_buzzer_params(parser):
     parser.add_argument('--buzzer_guessers', nargs='+', default = ['Tfidf'], help='Guessers to feed into Buzzer', type=str)
     parser.add_argument('--buzzer_history_length', type=int, default=0, help="How many time steps to retain guesser history")
     parser.add_argument('--buzzer_history_depth', type=int, default=0, help="How many old guesses per time step to keep")    
-    parser.add_argument('--features', nargs='+', help='Features to feed into Buzzer', type=str,  default=['Length', 'Frequency', 'Category'])    
+    parser.add_argument('--features', nargs='+', help='Features to feed into Buzzer', type=str,  default=['Length', 'GuessBlank', 'GuessCapital', 'Entity', 'Category', 'Frequency'])    
     parser.add_argument('--buzzer_type', type=str, default="LogisticBuzzer")
     parser.add_argument('--run_length', type=int, default=100)
     parser.add_argument('--primary_guesser', type=str, default='Tfidf', help="What guesser does buzzer depend on?")
@@ -214,6 +214,46 @@ def load_buzzer(flags, load=False):
         if ff == "Length":
             from features import LengthFeature
             feature = LengthFeature(ff)
+            buzzer.add_feature(feature)
+            features_added.add(ff)
+
+        if ff == "GuessBlank":
+            from features import GuessBlankFeature
+            feature = GuessBlankFeature(ff)
+            buzzer.add_feature(feature)
+            features_added.add(ff)
+
+        if ff == "GuessCapital":
+            from features import GuessCapitalsFeature
+            feature = GuessCapitalsFeature(ff)
+            buzzer.add_feature(feature)
+            features_added.add(ff)
+
+        if ff == "Entity":
+            from features import EntityFeature
+            feature = EntityFeature(ff)
+            buzzer.add_feature(feature)
+            features_added.add(ff)
+
+        if ff == "Count":
+            from features import CountFeature
+            feature = CountFeature(ff)
+            buzzer.add_feature(feature)
+            features_added.add(ff)
+
+        if ff == "Category":
+            from features import CategoryFeature
+            feature = CategoryFeature(ff)
+            buzzer.add_feature(feature)
+            features_added.add(ff)
+
+        if ff == "Frequency":
+            from features import FrequencyFeature
+            feature = FrequencyFeature(ff)
+            try:
+                feature.add_training("../data/qanta.buzztrain.json.gz")
+            except:
+                feature.add_training("./data/qanta.buzztrain.json.gz")
             buzzer.add_feature(feature)
             features_added.add(ff)
 
