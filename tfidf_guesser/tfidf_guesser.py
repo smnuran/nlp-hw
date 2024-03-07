@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 MODEL_PATH = 'tfidf.pickle'
 INDEX_PATH = 'index.pickle'
@@ -46,7 +47,7 @@ class TfidfGuesser(Guesser):
     """
     Class that, given a query, finds the most similar question to it.
     """
-    def __init__(self, filename, min_df=10, max_df=0.4):
+    def __init__(self, filename, min_df=0.10, max_df=0.75):
         """
         Initializes data structures that will be useful later.
 
@@ -56,7 +57,10 @@ class TfidfGuesser(Guesser):
         """
 
         # You'll need add the vectorizer here and replace this fake vectorizer
-        self.tfidf_vectorizer = DummyVectorizer()
+        #self.tfidf_vectorizer = DummyVectorizer()
+        #self.tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=min_df, max_df=max_df)
+        self.tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+        #self.tfidf_vectorizer = TfidfVectorizer(min_df=min_df, max_df=max_df)
         self.tfidf = None 
         self.questions = None
         self.answers = None
@@ -75,7 +79,7 @@ class TfidfGuesser(Guesser):
         Guesser.train(self, training_data, answer_field, split_by_sentence, min_length,
                       max_length, remove_missing_pages)
 
-        self.tfidf = self.tfidf_vectorizer.transform(self.questions)
+        self.tfidf = self.tfidf_vectorizer.fit_transform(self.questions)
         logging.info("Creating tf-idf dataframe with %i" % len(self.questions))
         
     def save(self):
@@ -106,16 +110,22 @@ class TfidfGuesser(Guesser):
         # Compute the cosine similarity
         question_tfidf = self.tfidf_vectorizer.transform([question])
         cosine_similarities = cosine_similarity(question_tfidf, self.tfidf)
-        cos = cosine_similarities[0]
+        cos = cosine_similarities[0] #gives us the cos sim of question to each self.question
+
         indices = cos.argsort()[::-1]
         guesses = []
+
+
         for i in range(max_n_guesses):
             # The line below is wrong but lets the code run for the homework.
             # Remove it or fix it!
-            idx = i
+            idx = indices[i]
             guess =  {"question": self.questions[idx], "guess": self.answers[idx],
                       "confidence": cos[idx]}
             guesses.append(guess)
+
+        #so for all the questions check which has the closest cosine sim to the question: and what guess goes with that question 
+
         return guesses
 
     def batch_guess(self, questions, max_n_guesses, block_size=1024):
