@@ -52,16 +52,16 @@ If you don't like the interruptability of questions, you can also just answer en
 Competition
 ==================
 
-We will use Dynabech website (https://dynabench.org/tasks/qa). If you
-remember the past workshop about Dynabench submission, this is the way
-to do it. The specific task name is "Grounded QA". Here, with the help
-of the video tutorial, you submit your QA model and assess how your QA
+We will use HuggingFace's leaderboard
+(https://huggingface.co/spaces/umdclip/grounded_qa_leaderboard). Here, you submit your QA model and assess how your QA
 model did compared to others. The assessment will take place by
-testing your QA model on several QA test datasets and the results of
-yours and your competitors will be visible on the leaderboard. Your
-goal is to rank the highest in terms of expected wins: you buzz in
-with probability proportional to your confidence, and if you're more
-right than the competition, you win.
+testing your QA model on *different* data than what we'll use for the
+final session.
+Your score will be visible on the leaderboard. Your
+goal is to rank the highest in terms of the [Buzz confidence](https://docs.google.com/document/d/1IgGSngNlIv5ZvcTh2_3kJqQKdcKDgz41qDZtWDWkY3k/edit?usp=sharing): you want
+to have high confidence when you're right and low confidence when
+you're wrong.
+
 
 Writing Questions
 ==================
@@ -78,6 +78,10 @@ In addition to the raw questions, you will also need to create citations describ
 * Why the information in the question is correct: include citations from the sources you drew on the write the question
 * Why the question is interesting: include scholarly / popular culture artifacts to prove that people care about this
 * Why the question is pyramidal: discuss why your first clues are harder than your later clues
+
+However, you'll be scored on the same metric as the system: you want
+humans to buzz correctly before the computer has the correct answer
+with high confidence.
 
 **Category**
 
@@ -188,6 +192,41 @@ Other than category diversity, if you find an ingenious way of writing questions
 For an example of what the writeup for a single question should look like, see the adversarial HW:
 https://github.com/Pinafore/nlp-hw/blob/master/adversarial/question.tex
 
+
+This is a Final
+------------
+
+While writing questions is designed to be fun (and it is), this is
+still the place for you to showcase what you've learned about natural
+language processing.  You should review the entire course's material
+not just for ideas of what topics to write about but also for
+techniques of how to write the questions.  For example:
+
+* The role of negation specifically and syntax more generally and how
+  that can help you
+  
+* The kind of data that QA systems (and NLP systems generally) are
+  trained on [i.e., if the information is in Wikipedia, you're going
+  to have a bad time]
+  
+* The role of attention in LLMs, and how that's used to generate text
+  [i.e., if the model isn't attending to a token, it's not going to
+  get used in answering a question]
+  
+* How you can use tf-idf as a proxy for attention for QA-like tasks
+  [if it's low tf-idf, it's likely not going to get high attention
+  ... use scene descriptions and descriptions of visual elements
+  whenever you can]
+  
+While all of the course's lectures could help you, some suggestions of
+material to review:
+
+* [How stump a computer](https://www.youtube.com/watch?v=6oZCIOBiSaI)
+* [Good questions](https://www.youtube.com/watch?v=uVcPlJu-JCM)
+* [Bad questions](https://youtu.be/LKQVJgj5ffg)
+* [Previous final](https://www.youtube.com/watch?v=dyaR7zT_KKg)
+* [QA Datasets](https://youtu.be/p8tnM1_waQ8)
+
 Proposal
 ==================
 
@@ -287,25 +326,19 @@ Each group has 10 minutes to deliver their presentation. Please record the video
 Final Question Submission
 ======================
 
-Because we need to get the questions ready for the systems, upload your raw questions on May 10.  This doesn't include the citations or other parts of the writeup.
+Because we need to get the questions ready for the systems, upload
+your raw questions on May 10 in json format on Gradescope.  This doesn't include the citations or
+other parts of the writeup.
 
 System Submission
 ======================
 
-You must submit a version of your system by May 12. It may not be perfect, but this what the question writing teams will use to test their results.
+You must submit a version of your system by May 12. It may not be
+perfect, but this what the question writing teams will use to test
+their results.
 
-Your system should be sent directly to the professor and TAs in zip files, including the correct dependencies and a working inference code. Your inference code should run successfully in the root folder (extracted from zip folder) directory with the command:
-
-```
-> python3 inference.py --data=evaluation_set.json 
-
-```
-
-The input will be in the form of a .json file () in the same format as the file the adversarial question writing team submits. The output format should also be in string.
-
-If you have any notes or comments that we should be aware of while running your code, please include them in the folder as a .txt file. Also, dependency information should be included as a .txt file. 
-
-Please prepend your email title with [2024-CMSC 470 System Submission].
+Your system should be uploaded directly to the HuggingFace
+leaderboard.
 
 Project Writeup and JSON file
 ======================
@@ -330,7 +363,7 @@ with open('path to your json file', 'r') as f:
     data = json.load(f)
 ```
 
-Grade
+Grade 
 ======================
 
 The grade will be out of 25 points, broken into five areas:
