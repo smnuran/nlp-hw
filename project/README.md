@@ -321,7 +321,9 @@ the final presentation you will:
 * Presumably you did many different things; how did they each
   individually contribute to your final result?
 
-Each group has 10 minutes to deliver their presentation. Please record the video, and upload it to Google Drive, and include the link in your writeup submission.
+Each group has 10 minutes to deliver their presentation. Please record
+the video, and upload it to Google Drive (or somewhere else where
+course staff can watch it), and include the link in your writeup submission.
 
 Final Question Submission
 ======================
@@ -356,7 +358,7 @@ For systems, please do not go over 2500 words unless you have a really good reas
 Images are a much better use of space than words, usually (there's no
 limit on including images, but use judgement and be selective).
 
-For question writing, you have one page (single spaced, two column) per question plus a two page summary of results. Talk about how you organized the question writing, how you evaluated the questions, and a summary of the results.  Along with your writeup, turn in a json including the raw text of the question and answer and category. The json file is included in this directory. Make sure your json file is in the correct format and is callable via below code. Your submission will not be graded if it does not follow the format of the example json file.  
+For question writing, you have one page (single spaced, two column) per question plus a two page summary of results. Talk about how you organized the question writing, how you evaluated the questions, and a summary of the results.  Along with your writeup, turn in a json including the raw text of the question and answer and category (you already turned this in for the final showdown, but we realize that you might find mistakes or typos in the course of preparing your writeup). The json file is included in this directory. Make sure your json file is in the correct format and is callable via below code. Your submission will not be graded if it does not follow the format of the example json file.  
 
 ```
 with open('path to your json file', 'r') as f:
@@ -414,3 +416,11 @@ hard to write adversarial questions against the best LLMs.
 *Q:* Do references count toward the page count?
 
 *A:* No.
+
+
+*Q.* Does everyone need to be in the presentation?  
+
+*A.* Nope, you can use your time however you want.  You can have
+everyone in it or you can just have one person do the whole
+presentation.  You also don't need to use the full time if you don't
+feel like you need it.
